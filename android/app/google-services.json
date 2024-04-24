@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "940619301346",
+    "project_id": "klyn-app",
+    "storage_bucket": "klyn-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940619301346:android:c3bb28b0f362db902079bb",
+        "android_client_info": {
+          "package_name": "com.example.klyn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEJTjgItidZTZUO0lYA7IqSKaoIg2e7RA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
