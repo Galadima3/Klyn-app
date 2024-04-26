@@ -1,9 +1,9 @@
 import 'package:go_router/go_router.dart';
-import 'package:klyn/main.dart';
 import 'package:klyn/src/features/auth/presentation/auth_checker.dart';
 import 'package:klyn/src/features/auth/presentation/screens/landing_screen.dart';
 import 'package:klyn/src/features/auth/presentation/screens/register_screen.dart';
 import 'package:klyn/src/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:klyn/src/features/chat/presentation/home_screen.dart';
 import 'package:klyn/src/routing/route_paths.dart';
 
 GoRouter appRouter = GoRouter(

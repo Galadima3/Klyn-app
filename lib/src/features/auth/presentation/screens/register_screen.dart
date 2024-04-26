@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:klyn/src/features/auth/data/auth_repository.dart';
 import 'package:klyn/src/features/auth/presentation/auth_controller.dart';
-import 'package:klyn/src/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:klyn/src/routing/route_paths.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -37,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> signUpMethod(
       String email, String password, WidgetRef ref) async {
-    final auth = ref.read(authControllerProvider.notifier);
+    final auth = ref.read(authRepositoryProvider);
     auth.signUp(email, password);
   }
 
@@ -169,61 +169,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
             //button
             Consumer(
               builder: (context, ref, child) {
-                final authController =
-                            ref.watch(authControllerProvider.notifier);
+                // final authController =
+                //             ref.watch(authControllerProvider.notifier);
                 return GestureDetector(
                   onTap: () {
                     if (emailFormKey.currentState!.validate() &&
                         passwordFormKey.currentState!.validate() &&
                         confirmPasswordFormKey.currentState!.validate()) {
                       try {
-                        signUpMethod(
-                          emailController.text,
-                          passwordController.text,
-                          ref,
-                        );
-                        context.pushNamed(RoutePaths.homeScreenRoute);
+                        Future.delayed(const Duration(seconds: 3)).then(
+                            (value) => signUpMethod(emailController.text,
+                                    passwordController.text, ref)
+                                .whenComplete(() =>
+                                    context.pushReplacementNamed(
+                                        RoutePaths.homeScreenRoute)));
+
+                        // context.pushNamed(RoutePaths.homeScreenRoute);
                       } catch (e) {
-                        
                         context.showSnackbar('Error: $e');
                       }
                     }
                   },
-                  child: Container(
-                    width: 328,
-                    height: 53,
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFF1AB65C),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(26.50),
-                      ),
-                      shadows: const [
-                        BoxShadow(
-                          color: Color(0x3F000000),
-                          blurRadius: 5,
-                          offset: Offset(0, 4),
-                          spreadRadius: 0,
-                        )
-                      ],
-                    ),
-                    child: Center(
-                      // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-                      child: authController.state == AuthState.loading 
-                          ? Transform.scale(
-                              scale: 0.65,
-                              child: const CircularProgressIndicator.adaptive(
-                                backgroundColor: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              'Sign up',
-                              style: GoogleFonts.urbanist(
-                                fontSize: 17,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                    ),
+                  child: const FancyButton(
+                   // authController: authController,
+                    buttonText: "Sign up",
                   ),
                 );
               },
@@ -246,7 +215,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => context.pushNamed(RoutePaths.signinScreenRoute),
+                    onTap: () =>
+                        context.pushNamed(RoutePaths.signinScreenRoute),
                     child: Text(
                       'Sign In ',
                       style: GoogleFonts.urbanist(
@@ -259,6 +229,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class FancyButton extends StatelessWidget {
+  const FancyButton({super.key, required this.buttonText});
+
+  // AuthController authController;
+  final String buttonText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 328,
+      height: 53,
+      decoration: ShapeDecoration(
+        color: const Color(0xFF1AB65C),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(26.50),
+        ),
+        shadows: const [
+          BoxShadow(
+            color: Color(0x3F000000),
+            blurRadius: 5,
+            offset: Offset(0, 4),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Center(
+        // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+        // child: authController.state == AuthState.loading
+        //     ? Transform.scale(
+        //         scale: 0.65,
+        //         child: const CircularProgressIndicator.adaptive(
+        //           backgroundColor: Colors.white,
+        //         ),
+        //       )
+        child: Text(
+          buttonText,
+          style: GoogleFonts.urbanist(
+            fontSize: 17,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

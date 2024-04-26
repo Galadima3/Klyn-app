@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:klyn/src/features/auth/presentation/screens/sign_in_screen.dart';
-import 'package:klyn/src/features/auth/presentation/screens/register_screen.dart';
 import 'package:klyn/src/routing/route_paths.dart';
 
 class LandingScreen extends StatelessWidget {

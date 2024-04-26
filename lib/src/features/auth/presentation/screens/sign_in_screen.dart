@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:klyn/src/features/auth/data/auth_repository.dart';
 
 import 'package:klyn/src/features/auth/presentation/auth_controller.dart';
 import 'package:klyn/src/features/auth/presentation/screens/register_screen.dart';
@@ -35,10 +38,21 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> signInMethod(
       String email, String password, WidgetRef ref) async {
     FocusManager.instance.primaryFocus?.unfocus();
-
-    ref
-        .read(authControllerProvider.notifier)
-        .signInWithEmailAndPassword(email, password);
+    try {
+      await ref.read(authRepositoryProvider).signInWithEmailAndPassword(
+            email,
+            password,
+          );
+      context.pushReplacementNamed(RoutePaths.homeScreenRoute);
+    } on AuthException catch (e) {
+      e.message ==
+              "The supplied auth credential is incorrect, malformed or has expired."
+          ? context.showSnackbar("User not found")
+          : context
+              .showSnackbar(e.message); // Display the specific error message
+    } catch (e) {
+      context.showSnackbar("An error occurred. Please try again later.");
+    }
   }
 
   @override
@@ -156,19 +170,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
             //button
             Consumer(builder: (context, ref, child) {
-              final isLoading = ref.watch(authControllerProvider.notifier);
+              //final isLoading = ref.watch(authControllerProvider.notifier);
               return InkWell(
-                onTap: () {
-                  if (emailFormKey.currentState!.validate() &&
-                      passwordFormKey.currentState!.validate()) {
-                    try {
-                      signInMethod(
-                          emailController.text, passwordController.text, ref);
-                      context.pushReplacementNamed(RoutePaths.homeScreenRoute);
-                    } catch (e) {
-                      context.showSnackbar("Error: $e");
-                    }
-                  }
+                onTap: () async {
+                  signInMethod(
+                      emailController.text, passwordController.text, ref);
                 },
                 child: Container(
                   width: 328,
@@ -189,21 +195,21 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   child: Center(
                     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-                    child: isLoading.state == AuthState.loading
-                        ? Transform.scale(
-                            scale: 0.65,
-                            child: const CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.white,
-                            ),
-                          )
-                        : Text(
-                            'Sign In',
-                            style: GoogleFonts.urbanist(
-                              fontSize: 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                    // child: isLoading.state == AuthState.loading
+                    //     ? Transform.scale(
+                    //         scale: 0.65,
+                    //         child: const CircularProgressIndicator.adaptive(
+                    //           backgroundColor: Colors.white,
+                    //         ),
+                    //       )
+                    child: Text(
+                      'Sign In',
+                      style: GoogleFonts.urbanist(
+                        fontSize: 17,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -226,7 +232,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                   GestureDetector(
-                   onTap: () => context.pushNamed(RoutePaths.registerSreenRoute),
+                    onTap: () =>
+                        context.pushNamed(RoutePaths.registerSreenRoute),
                     child: Text(
                       'Sign up',
                       style: GoogleFonts.urbanist(

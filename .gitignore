@@ -10,6 +10,8 @@
 .svn/
 migrate_working_dir/
 lib/firebase_options.dart
+C:/Users/User/Desktop/Flutter/klyn/ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
 
 # IntelliJ related
 *.iml
